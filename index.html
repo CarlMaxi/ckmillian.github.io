@@ -1,228 +1,775 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Ckmillian — Learn, grow, and empower yourself with knowledge in literacy, morality, and security." />
   <title>Ckmillian</title>
-  <link rel="stylesheet" href="style2.css">
   <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root{
+      --brand-1:#ff7f50;
+      --brand-2:#ffb347;
+      --bg:#f9f9f9;
+      --text:#1a1a1a;
+      --muted:#555;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --accent:#fc4301;
+      --accent-700:#e03a00;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+      --radius:14px;
+      --container:1200px;
+      --focus: 0 0 0 3px rgba(252,67,1,.35);
+    }
+    /* Dark theme */
+    [data-theme="dark"]{
+      --bg:#0b1220;
+      --text:#e5e7eb;
+      --muted:#b3b3b3;
+      --card:#0f172a;
+      --border:#1f2937;
+      --accent:#ff7a4e;
+      --accent-700:#ff5a28;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --focus: 0 0 0 3px rgba(255,122,78,.45);
+    }
+
+    /* ===== RESET ===== */
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto; }
+    }
+    body{
+      margin:0;
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    img{ max-width:100%; display:block; }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; color:inherit; }
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+    .skip-link{
+      position:absolute; left:-999px; top:0;
+      background:var(--accent); color:#fff; padding:.5rem .75rem; border-radius:8px; z-index:999;
+    }
+    .skip-link:focus{ left:12px; top:12px; box-shadow:var(--focus); }
+
+    /* ===== HEADER ===== */
+    header{
+      position:sticky; top:0; z-index:1000;
+      display:flex; align-items:center; gap:.75rem; justify-content:space-between;
+      padding:.75rem 1.25rem;
+      background:var(--card); border-bottom:1px solid var(--border);
+      backdrop-filter:saturate(180%) blur(6px);
+    }
+    .brand{
+      display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:1.25rem;
+    }
+    .brand .logo{
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .primary-nav{
+      display:flex; align-items:center; gap:1rem;
+    }
+    .nav-list{
+      display:flex; align-items:center; gap:1rem; list-style:none; margin:0; padding:0;
+    }
+    .nav-list a{
+      padding:.5rem .75rem; border-radius:10px; color:var(--muted);
+    }
+    .nav-list a:hover{ color:var(--text); background:rgba(127,127,127,.08); }
+    .nav-list a.active{ color:var(--text); font-weight:600; }
+
+    .nav-controls{
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .search{
+      position:relative;
+    }
+    .search input{
+      width:260px; max-width:45vw;
+      padding:.55rem 2.25rem .55rem 2rem; border:1px solid var(--border); border-radius:999px;
+      background:var(--bg); color:var(--text); outline:none;
+    }
+    .search input:focus{ box-shadow:var(--focus); }
+    .search .icon{
+      position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:var(--muted); font-size:.9rem;
+    }
+    .search .clear{
+      position:absolute; right:.25rem; top:50%; transform:translateY(-50%);
+      background:transparent; border:none; color:var(--muted); cursor:pointer; padding:.25rem; border-radius:6px;
+    }
+    .theme-toggle, .menu-toggle-btn{
+      display:inline-grid; place-items:center;
+      width:40px; height:40px; border-radius:999px; border:1px solid var(--border);
+      background:var(--bg); cursor:pointer;
+    }
+    .theme-toggle:focus, .menu-toggle-btn:focus{ box-shadow:var(--focus); outline:none; }
+    .menu-toggle-btn{ display:none; }
+
+    .menu-toggle{ position:absolute; left:-9999px; }
+
+    @media (max-width: 900px){
+      .search input{ width:200px; }
+      .nav-list{ display:none; }
+      .primary-nav{ width:100%; }
+      .menu-toggle-btn{ display:inline-grid; }
+      header.open .nav-list{
+        display:flex;
+        position:absolute; left:0; right:0; top:100%;
+        background:var(--card); border-bottom:1px solid var(--border);
+        padding:.75rem 1rem; gap:.5rem; flex-wrap:wrap; justify-content:center;
+      }
+      .nav-controls{ margin-left:auto; }
+    }
+
+    /* ===== HERO ===== */
+    .hero{
+      position:relative; display:grid; place-items:center; text-align:center;
+      min-height:calc(100svh - 68px);
+      color:#fff; isolation:isolate;
+      background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)), url('https://picsum.photos/1600/900?blur=2') center/cover no-repeat;
+      padding:2rem 1rem;
+    }
+    .hero .content{ max-width:900px; padding:1rem; }
+    .hero h1{
+      font-size:clamp(2.2rem,4vw + 1rem,4rem);
+      margin:0 0 .75rem; letter-spacing:.3px; line-height:1.15;
+    }
+    .hero p{
+      font-size:clamp(1rem,1.2vw + .8rem,1.25rem);
+      margin:0 auto 1.25rem; max-width:60ch;
+    }
+    .cta{
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+      color:#0b0b0b; padding:.8rem 1.1rem; border-radius:12px; font-weight:700; border:none; cursor:pointer;
+      transition:transform .2s ease, filter .2s ease; text-decoration:none;
+    }
+    .cta:hover{ transform:translateY(-1px); filter:saturate(1.05); }
+    .cta:focus{ box-shadow:var(--focus); outline:none; }
+
+    .quick-nav{
+      display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;
+    }
+    .quick-nav a{
+      background:rgba(255,255,255,.15); color:#fff; padding:.45rem .75rem; border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .quick-nav a:hover{ background:rgba(255,255,255,.25); }
+
+    /* ===== SECTIONS ===== */
+    main{ overflow-x:hidden; }
+    section.content-section{
+      max-width:var(--container); margin:2rem auto; padding:2.25rem 1.25rem;
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .section-head{
+      display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;
+    }
+    .content-section h2{
+      font-size:clamp(1.5rem,1.4vw + 1rem,2rem); margin:0; font-weight:700;
+    }
+    .section-tools{
+      display:flex; gap:.5rem; flex-wrap:wrap;
+    }
+    .btn, .ghost{
+      display:inline-flex; align-items:center; gap:.45rem; padding:.5rem .7rem; border-radius:10px; border:1px solid var(--border);
+      background:var(--bg); color:var(--text); cursor:pointer; transition:background .2s ease, transform .2s ease, border-color .2s ease;
+    }
+    .btn:hover, .ghost:hover{ transform:translateY(-1px); background:rgba(127,127,127,.08); }
+    .btn:focus, .ghost:focus{ outline:none; box-shadow:var(--focus); }
+
+    /* ===== CARDS & DETAILS ===== */
+    .cards{
+      display:grid; gap:1rem; grid-template-columns:repeat(12,1fr);
+      margin-top:1rem;
+    }
+    .cards > .card{ grid-column:span 4; }
+    @media (max-width: 1024px){ .cards > .card{ grid-column:span 6; } }
+    @media (max-width: 640px){ .cards > .card{ grid-column:span 12; } }
+
+    .card{
+      background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+      display:flex; flex-direction:column; min-height:100%;
+      transform:translateY(12px); opacity:0; transition:transform .6s ease, opacity .6s ease;
+    }
+    .card.is-visible{ transform:none; opacity:1; }
+    .card header{ position:relative; border:none; background:transparent; padding:0; }
+    .card figure{ margin:0; position:relative; }
+    .card .card-img{
+      width:100%; height:160px; object-fit:cover; display:block;
+    }
+    .badge{
+      position:absolute; top:.6rem; left:.6rem; background:rgba(0,0,0,.55); color:#fff;
+      padding:.2rem .5rem; border-radius:999px; font-size:.75rem;
+    }
+    .card .wrap{ padding:1rem; display:flex; flex-direction:column; gap:.5rem; }
+    .card h3{ margin:.1rem 0; font-size:1.1rem; }
+    .card p{ margin:0; color:var(--muted); }
+    details{
+      border-top:1px dashed var(--border);
+      margin-top:.5rem; padding-top:.5rem;
+    }
+    details > summary{
+      cursor:pointer; list-style:none; display:flex; align-items:center; gap:.5rem; color:var(--accent); font-weight:700;
+    }
+    details > summary::marker, details > summary::-webkit-details-marker{ display:none; }
+    details[open] > summary{ color:var(--accent-700); }
+    .details-body{ padding-top:.5rem; color:var(--text); }
+    .details-body h4{ margin:.25rem 0 .5rem; }
+    .details-body p{ margin:.25rem 0; color:var(--muted); }
+    .hidden{ display:none !important; }
+
+    /* ===== FOOTER ===== */
+    footer{
+      margin-top:2rem; padding:2rem 1.25rem; text-align:center; background:var(--card); border-top:1px solid var(--border);
+      color:var(--muted);
+    }
+    .social{ margin-top:.5rem; display:flex; justify-content:center; gap:.75rem; }
+    .social a{
+      width:40px; height:40px; display:inline-grid; place-items:center; border-radius:999px; border:1px solid var(--border);
+      background:var(--bg);
+    }
+    .social a:hover{ transform:translateY(-1px); background:rgba(127,127,127,.08); }
+    .social a:focus{ outline:none; box-shadow:var(--focus); }
+
+    /* ===== BACK TO TOP ===== */
+    #back-to-top{
+      position:fixed; right:20px; bottom:20px; z-index:1000;
+      width:48px; height:48px; border-radius:999px; border:1px solid var(--border);
+      background:var(--accent); color:#fff; display:none; place-items:center; cursor:pointer;
+      box-shadow:var(--shadow);
+    }
+    #back-to-top:hover{ filter:saturate(1.05); transform:translateY(-1px); }
+    #back-to-top:focus{ outline:none; box-shadow:0 0 0 4px rgba(252,67,1,.3); }
+
+    /* Small helpers */
+    .muted{ color:var(--muted); }
+    .center{ text-align:center; }
+    .pill{
+      display:inline-block; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--border); background:var(--bg);
+      color:var(--muted); font-size:.8rem;
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; }
+    }
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <!-- HEADER -->
-  <header aria-label="Main Navigation">
-    <div class="logo">Ckmillian</div>
-    <input type="checkbox" id="menu-toggle" class="menu-toggle">
-    <label for="menu-toggle" class="hamburger">☰</label>
-    <nav>
-      <ul>
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="#literacy">Literacy</a></li>
-        <li><a href="#morality">Morality</a></li>
-        <li><a href="#security">Security</a></li>
-        <li><a href="#resources">Resources</a></li>
+  <header id="top">
+    <div class="brand" aria-label="Ckmillian Home">
+      <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+      <a class="logo" href="index.html" aria-current="page">Ckmillian</a>
+    </div>
+
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <ul class="nav-list">
+        <li><a class="active" href="#literacy"><i class="fa-solid fa-book"></i> Literacy</a></li>
+        <li><a href="#morality"><i class="fa-solid fa-scale-balanced"></i> Morality</a></li>
+        <li><a href="#security"><i class="fa-solid fa-shield-halved"></i> Security</a></li>
+        <li><a href="#resources"><i class="fa-solid fa-book-open"></i> Resources</a></li>
       </ul>
     </nav>
-    <input type="text" id="search" placeholder="Search topics..." onkeyup="searchSite()">
+
+    <div class="nav-controls">
+      <div class="search" role="search">
+        <i class="fa-solid fa-magnifying-glass icon" aria-hidden="true"></i>
+        <input id="search" type="search" placeholder="Search topics..." aria-label="Search topics" autocomplete="off" />
+        <button id="clear-search" class="clear" title="Clear search" aria-label="Clear search">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme" aria-pressed="false">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <label for="menu-toggle" class="menu-toggle-btn" title="Menu" aria-label="Toggle menu">
+        <i class="fa-solid fa-bars"></i>
+      </label>
+      <input type="checkbox" id="menu-toggle" class="menu-toggle" />
+    </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero"> 
-    <h1 class="hero-title">Welcome to <span class="brand">Ckmillian</span></h1>
-    <p>Learn, grow, and empower yourself with knowledge.</p>
-    <a href="#literacy" class="cta">Start Learning</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="content">
+      <h1>Welcome to <span class="logo">Ckmillian</span></h1>
+      <p>Learn, grow, and empower yourself with knowledge across literacy, morality, and security.</p>
+      <a class="cta" href="#literacy"><i class="fa-solid fa-bolt"></i> Start Learning</a>
+
+      <div class="quick-nav" aria-label="Quick navigation">
+        <a href="#literacy"><i class="fa-solid fa-book"></i> Literacy</a>
+        <a href="#morality"><i class="fa-solid fa-scale-balanced"></i> Morality</a>
+        <a href="#security"><i class="fa-solid fa-shield-halved"></i> Security</a>
+        <a href="#resources"><i class="fa-solid fa-book-open"></i> Resources</a>
+      </div>
+    </div>
   </section>
 
-<!-- LITERACY SECTION -->
-<section id="literacy" class="content-section">
-  <h2>Literacy</h2>
-  <div class="cards">
-    <div class="card" role="article">
-      <img src="images/reading.jpg" alt="Reading Skills Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-book fa-2x"></i>
-      <h3>Reading Skills</h3>
-      <p>Improve comprehension and speed with curated exercises and reading strategies.</p>
-      <details id="reading-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Reading Skills</h3>
-        <p>Sharpen your reading through skimming, scanning, and deep-reading techniques. Explore curated book lists and practice speed-reading to improve both comprehension and retention.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/writing.jpg" alt="Writing Skills Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-pen-fancy fa-2x"></i>
-      <h3>Writing Skills</h3>
-      <p>Master clear, concise, and expressive writing for school and personal projects.</p>
-      <details id="writing-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Writing Skills</h3>
-        <p>Develop clear and expressive writing. Learn sentence structure, grammar mastery, and storytelling techniques that make your essays, blogs, and personal work stand out.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/comprehension.jpg" alt="Comprehension Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-book-reader fa-2x"></i>
-      <h3>Comprehension</h3>
-      <p>Enhance memory and understanding with effective comprehension techniques.</p>
-      <details id="comprehension-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Comprehension</h3>
-        <p>Boost your understanding with active recall, note-taking frameworks, and summarization methods. Perfect for studying, exams, and everyday information retention.</p>
-      </details>
-    </div>
-  </div>
-</section>
+  <main id="main" tabindex="-1">
+    <!-- LITERACY -->
+    <section id="literacy" class="content-section" aria-labelledby="literacy-title">
+      <div class="section-head">
+        <h2 id="literacy-title"><i class="fa-solid fa-book" aria-hidden="true"></i> Literacy</h2>
+        <div class="section-tools">
+          <button class="btn" data-expand-all="#literacy"><i class="fa-solid fa-square-plus"></i> Expand all</button>
+          <button class="btn" data-collapse-all="#literacy"><i class="fa-solid fa-square-minus"></i> Collapse all</button>
+        </div>
+      </div>
+      <div class="cards" role="list">
+        <article class="card" role="listitem" data-title="Reading Skills">
+          <header>
+            <figure>
+              <img src="images/reading.jpg" alt="Reading skills illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Foundational</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-book fa-2x" aria-hidden="true"></i>
+            <h3>Reading Skills</h3>
+            <p>Improve comprehension and speed with curated exercises and strategies.</p>
+            <details id="reading-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Reading Skills</h4>
+                <p>Sharpen your reading through skimming, scanning, and deep-reading. Explore curated book lists and practice speed-reading to improve comprehension and retention.</p>
+              </div>
+            </details>
+          </div>
+        </article>
 
-<!-- MORALITY SECTION -->
-<section id="morality" class="content-section">
-  <h2>Morality</h2>
-  <div class="cards">
-    <div class="card" role="article">
-      <img src="images/ethical.jpg" alt="Ethical Thinking Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-lightbulb fa-2x"></i>
-      <h3>Ethical Thinking</h3>
-      <p>Understand moral dilemmas and develop strong ethical decision-making skills.</p>
-      <details id="ethical-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Ethical Thinking</h3>
-        <p>Train your mind to evaluate tough moral dilemmas. Practice scenarios that sharpen your judgment while balancing fairness, empathy, and logic.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/values.jpg" alt="Values & Principles Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-compass fa-2x"></i>
-      <h3>Values & Principles</h3>
-      <p>Build a personal code of conduct to guide actions and relationships.</p>
-      <details id="values-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Values & Principles</h3>
-        <p>Discover how honesty, respect, and resilience form the pillars of a strong moral compass. Build your personal guide to life decisions.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/social.jpg" alt="Social Responsibility Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-users fa-2x"></i>
-      <h3>Social Responsibility</h3>
-      <p>Learn how to positively impact your community and environment.</p>
-      <details id="social-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Social Responsibility</h3>
-        <p>Engage in projects and discussions that strengthen your role in your community. Learn to balance personal goals with the greater good.</p>
-      </details>
-    </div>
-  </div>
-</section>
+        <article class="card" role="listitem" data-title="Writing Skills">
+          <header>
+            <figure>
+              <img src="images/writing.jpg" alt="Writing skills illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Creative</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-pen-fancy fa-2x" aria-hidden="true"></i>
+            <h3>Writing Skills</h3>
+            <p>Master clear, concise, and expressive writing for school and personal projects.</p>
+            <details id="writing-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Writing Skills</h4>
+                <p>Develop expressive writing: structure, grammar, and storytelling techniques that make essays, blogs, and personal work stand out.</p>
+              </div>
+            </details>
+          </div>
+        </article>
 
-<!-- SECURITY SECTION -->
-<section id="security" class="content-section">
-  <h2>Security</h2>
-  <div class="cards">
-    <div class="card" role="article">
-      <img src="images/digital.jpg" alt="Digital Safety Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-lock fa-2x"></i>
-      <h3>Digital Safety</h3>
-      <p>Protect your devices, accounts, and personal information online.</p>
-      <details id="digital-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Digital Safety</h3>
-        <p>From strong passwords to two-factor authentication, explore practical steps to keep your online identity secure from hackers and scams.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/physical.jpg" alt="Physical Safety Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-shield-alt fa-2x"></i>
-      <h3>Physical Safety</h3>
-      <p>Stay aware of your surroundings and learn tips for personal safety at home and school.</p>
-      <details id="physical-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Physical Safety</h3>
-        <p>Learn daily safety routines: awareness of exits, safe travel practices, and home security basics to reduce risks in the physical world.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/cyber.jpg" alt="Cybersecurity Basics Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-user-shield fa-2x"></i>
-      <h3>Cybersecurity Basics</h3>
-      <p>Learn about VPNs, antivirus tools, and safe browsing habits.</p>
-      <details id="cyber-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Cybersecurity Basics</h3>
-        <p>Understand how VPNs, firewalls, and antivirus software work. Get started with the essentials of staying safe online without overwhelming complexity.</p>
-      </details>
-    </div>
-  </div>
-</section>
+        <article class="card" role="listitem" data-title="Comprehension">
+          <header>
+            <figure>
+              <img src="images/comprehension.jpg" alt="Comprehension illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Cognitive</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-book-reader fa-2x" aria-hidden="true"></i>
+            <h3>Comprehension</h3>
+            <p>Enhance memory and understanding with effective techniques.</p>
+            <details id="comprehension-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Comprehension</h4>
+                <p>Boost understanding with active recall, note-taking frameworks, and summarization methods—perfect for studying and exams.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+      </div>
+    </section>
 
-<!-- RESOURCES SECTION -->
-<section id="resources" class="content-section">
-  <h2>Resources</h2>
-  <div class="cards">
-    <div class="card" role="article">
-      <img src="images/guides.jpg" alt="Guides Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-book-open fa-2x"></i>
-      <h3>Guides</h3>
-      <p>Step-by-step guides to help you master literacy, morality, and security topics.</p>
-      <details id="guides-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Guides</h3>
-        <p>Browse practical tutorials on literacy, morality, and security. Includes beginner-friendly steps and advanced practices to grow your skills.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/tools.jpg" alt="Tools & References Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-tools fa-2x"></i>
-      <h3>Tools & References</h3>
-      <p>Access helpful tools, cheat sheets, and references for practical learning.</p>
-      <details id="tools-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Tools & References</h3>
-        <p>Find dictionaries, checklists, and cheat sheets to make learning smooth. Explore curated links to trusted platforms and resources.</p>
-      </details>
-    </div>
-    <div class="card" role="article">
-      <img src="images/community.jpg" alt="Community Illustration" class="card-img" loading="lazy">
-      <i class="fas fa-users fa-2x"></i>
-      <h3>Community</h3>
-      <p>Connect with peers, share knowledge, and participate in discussions.</p>
-      <details id="community-details" class="detail-section">
-        <summary class="learn-more">Learn More</summary>
-        <h3>Community</h3>
-        <p>Join discussions, share stories, and connect with learners like you. Our community is here to support and inspire your growth.</p>
-      </details>
-    </div>
-  </div>
-</section>
+    <!-- MORALITY -->
+    <section id="morality" class="content-section" aria-labelledby="morality-title">
+      <div class="section-head">
+        <h2 id="morality-title"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Morality</h2>
+        <div class="section-tools">
+          <button class="btn" data-expand-all="#morality"><i class="fa-solid fa-square-plus"></i> Expand all</button>
+          <button class="btn" data-collapse-all="#morality"><i class="fa-solid fa-square-minus"></i> Collapse all</button>
+        </div>
+      </div>
+      <div class="cards" role="list">
+        <article class="card" role="listitem" data-title="Ethical Thinking">
+          <header>
+            <figure>
+              <img src="images/ethical.jpg" alt="Ethical thinking illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Reasoning</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-lightbulb fa-2x" aria-hidden="true"></i>
+            <h3>Ethical Thinking</h3>
+            <p>Understand moral dilemmas and develop strong ethical decision-making skills.</p>
+            <details id="ethical-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Ethical Thinking</h4>
+                <p>Evaluate moral dilemmas with frameworks that balance fairness, empathy, and logic. Practice scenario-based judgment calls.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Values Principles">
+          <header>
+            <figure>
+              <img src="images/values.jpg" alt="Values and principles illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Character</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-compass fa-2x" aria-hidden="true"></i>
+            <h3>Values &amp; Principles</h3>
+            <p>Build a personal code of conduct to guide actions and relationships.</p>
+            <details id="values-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Values &amp; Principles</h4>
+                <p>Develop a strong moral compass with honesty, respect, and resilience. Create a personal decision guide for life.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Social Responsibility">
+          <header>
+            <figure>
+              <img src="images/social.jpg" alt="Social responsibility illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Community</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-users fa-2x" aria-hidden="true"></i>
+            <h3>Social Responsibility</h3>
+            <p>Learn how to positively impact your community and environment.</p>
+            <details id="social-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Social Responsibility</h4>
+                <p>Engage in community projects and discussions. Learn to balance personal goals with the greater good.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECURITY -->
+    <section id="security" class="content-section" aria-labelledby="security-title">
+      <div class="section-head">
+        <h2 id="security-title"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Security</h2>
+        <div class="section-tools">
+          <button class="btn" data-expand-all="#security"><i class="fa-solid fa-square-plus"></i> Expand all</button>
+          <button class="btn" data-collapse-all="#security"><i class="fa-solid fa-square-minus"></i> Collapse all</button>
+        </div>
+      </div>
+      <div class="cards" role="list">
+        <article class="card" role="listitem" data-title="Digital Safety">
+          <header>
+            <figure>
+              <img src="images/digital.jpg" alt="Digital safety illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Privacy</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-lock fa-2x" aria-hidden="true"></i>
+            <h3>Digital Safety</h3>
+            <p>Protect your devices, accounts, and personal information online.</p>
+            <details id="digital-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Digital Safety</h4>
+                <p>From strong passwords to 2FA, learn practical steps to keep your online identity secure from hackers and scams.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Physical Safety">
+          <header>
+            <figure>
+              <img src="images/physical.jpg" alt="Physical safety illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Awareness</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-shield-alt fa-2x" aria-hidden="true"></i>
+            <h3>Physical Safety</h3>
+            <p>Stay aware of your surroundings and learn personal safety tips.</p>
+            <details id="physical-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Physical Safety</h4>
+                <p>Daily routines for situational awareness, safe travel practices, and home security basics to reduce physical risks.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Cybersecurity Basics">
+          <header>
+            <figure>
+              <img src="images/cyber.jpg" alt="Cybersecurity basics illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Tech</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-user-shield fa-2x" aria-hidden="true"></i>
+            <h3>Cybersecurity Basics</h3>
+            <p>Learn about VPNs, antivirus tools, and safe browsing habits.</p>
+            <details id="cyber-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Cybersecurity Basics</h4>
+                <p>Understand how VPNs, firewalls, and antivirus software work. Start with essential habits for staying safe online.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section id="resources" class="content-section" aria-labelledby="resources-title">
+      <div class="section-head">
+        <h2 id="resources-title"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Resources</h2>
+        <div class="section-tools">
+          <button class="btn" data-expand-all="#resources"><i class="fa-solid fa-square-plus"></i> Expand all</button>
+          <button class="btn" data-collapse-all="#resources"><i class="fa-solid fa-square-minus"></i> Collapse all</button>
+        </div>
+      </div>
+      <div class="cards" role="list">
+        <article class="card" role="listitem" data-title="Guides">
+          <header>
+            <figure>
+              <img src="images/guides.jpg" alt="Guides illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">How-To</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-book-open fa-2x" aria-hidden="true"></i>
+            <h3>Guides</h3>
+            <p>Step-by-step guides for literacy, morality, and security topics.</p>
+            <details id="guides-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Guides</h4>
+                <p>Browse practical tutorials from beginner-friendly steps to advanced practices. Curated to help you grow efficiently.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Tools References">
+          <header>
+            <figure>
+              <img src="images/tools.jpg" alt="Tools and references illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Utility</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-tools fa-2x" aria-hidden="true"></i>
+            <h3>Tools &amp; References</h3>
+            <p>Access helpful tools, cheat sheets, and trusted references.</p>
+            <details id="tools-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Tools &amp; References</h4>
+                <p>Find dictionaries, checklists, and curated links to trusted platforms to make learning smooth and fast.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="card" role="listitem" data-title="Community">
+          <header>
+            <figure>
+              <img src="images/community.jpg" alt="Community illustration" class="card-img" loading="lazy" width="600" height="400">
+              <span class="badge">Together</span>
+            </figure>
+          </header>
+          <div class="wrap">
+            <i class="fa-solid fa-users fa-2x" aria-hidden="true"></i>
+            <h3>Community</h3>
+            <p>Connect with peers, share knowledge, and join discussions.</p>
+            <details id="community-details">
+              <summary class="learn-more"><i class="fa-solid fa-circle-chevron-down"></i> Learn More</summary>
+              <div class="details-body">
+                <h4>Community</h4>
+                <p>Join discussions, share stories, and grow together. Our community is here to support and inspire your journey.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+      </div>
+
+      <p id="no-results" class="center muted hidden" role="status" aria-live="polite">No results found.</p>
+    </section>
+  </main>
 
   <!-- FOOTER -->
   <footer>
-    <p>&copy; 2025 Ckmillian. All Rights Reserved.</p>
-    <div class="social">
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
+    <div>&copy; <span id="year"></span> Ckmillian. All Rights Reserved.</div>
+    <div class="social" aria-label="Social media">
+      <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
     </div>
   </footer>
 
-  <button id="back-to-top" onclick="scrollToTop()">↑</button>
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 
-  <!-- JS -->
   <script>
-    function searchSite() {
-      let input = document.getElementById('search').value.toLowerCase();
-      document.querySelectorAll('.content-section, .detail-section').forEach(section => {
-        section.style.display = section.textContent.toLowerCase().includes(input) ? 'block' : 'none';
+    // Theme toggle with persistence
+    (function(){
+      const root = document.documentElement;
+      const key = 'ckmillian-theme';
+      const btn = document.getElementById('theme-toggle');
+      const saved = localStorage.getItem(key);
+      const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      const apply = (mode) => {
+        root.setAttribute('data-theme', mode);
+        btn.setAttribute('aria-pressed', mode === 'dark');
+        btn.innerHTML = mode === 'dark'
+          ? '<i class="fa-solid fa-sun" aria-hidden="true"></i>'
+          : '<i class="fa-solid fa-moon" aria-hidden="true"></i>';
+      };
+
+      apply(saved || (systemPrefersDark ? 'dark' : 'light'));
+
+      btn.addEventListener('click', () => {
+        const mode = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(key, mode);
+        apply(mode);
       });
-    }
+    })();
 
-    window.onscroll = function() { 
-      document.getElementById('back-to-top').style.display = (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) ? 'block' : 'none'; 
-    };
+    // Mobile menu toggle
+    (function(){
+      const header = document.querySelector('header');
+      const checkbox = document.getElementById('menu-toggle');
+      checkbox.addEventListener('change', () => {
+        header.classList.toggle('open', checkbox.checked);
+      });
+      // Close menu when a nav link is clicked (mobile)
+      document.querySelectorAll('.nav-list a').forEach(a=>{
+        a.addEventListener('click', ()=> {
+          checkbox.checked = false;
+          header.classList.remove('open');
+        });
+      });
+    })();
 
-    function scrollToTop() { 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); 
-    }
+    // Search filter (debounced) across cards, headers, and details text
+    (function(){
+      const input = document.getElementById('search');
+      const clearBtn = document.getElementById('clear-search');
+      const noResults = document.getElementById('no-results');
+
+      let t;
+      const filter = () => {
+        const q = input.value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.card');
+        let matches = 0;
+
+        cards.forEach(card => {
+          const haystack = card.textContent.toLowerCase();
+          const show = !q || haystack.includes(q);
+          card.classList.toggle('hidden', !show);
+          if (show) matches++;
+        });
+
+        noResults.classList.toggle('hidden', matches > 0);
+        clearBtn.style.visibility = q ? 'visible' : 'hidden';
+      };
+
+      input.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(filter, 120);
+      });
+
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        filter();
+        input.focus();
+      });
+
+      filter(); // init
+    })();
+
+    // Expand / Collapse all details within a section
+    (function(){
+      document.querySelectorAll('[data-expand-all]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const root = document.querySelector(btn.getAttribute('data-expand-all'));
+          root.querySelectorAll('details').forEach(d=> d.open = true);
+        });
+      });
+      document.querySelectorAll('[data-collapse-all]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const root = document.querySelector(btn.getAttribute('data-collapse-all'));
+          root.querySelectorAll('details').forEach(d=> d.open = false);
+        });
+      });
+    })();
+
+    // Scroll reveal
+    (function(){
+      const cards = document.querySelectorAll('.card');
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(c=> c.classList.add('is-visible'));
+        return;
+      }
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+      cards.forEach(c=> io.observe(c));
+    })();
+
+    // Back to top button + scroll behavior
+    (function(){
+      const btn = document.getElementById('back-to-top');
+      const toggle = () => {
+        const show = window.scrollY > 300;
+        btn.style.display = show ? 'grid' : 'none';
+      };
+      window.addEventListener('scroll', toggle, { passive:true });
+      toggle();
+      btn.addEventListener('click', ()=> window.scrollTo({ top:0, behavior:'smooth' }));
+    })();
+
+    // Current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
